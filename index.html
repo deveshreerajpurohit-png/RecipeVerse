@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecipeVerse - Discover, Cook, Share & Inspire</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        cocoa: {
+                            50: '#FDFBF9',
+                            100: '#F7F2EE',
+                            800: '#3D312E',
+                            900: '#2B211F',
+                        },
+                        coral: {
+                            500: '#FF6B4A',
+                            600: '#E85333',
+                        },
+                        amber: {
+                            500: '#FF8F3D',
+                            600: '#E27623',
+                        },
+                        sage: {
+                            500: '#30A86A',
+                            600: '#248A54',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern Warm Palette Themes */
+        :root {
+            --primary: #FF6B4A;
+            --primary-hover: #E85333;
+            --secondary: #FF8F3D;
+            --accent: #30A86A;
+            --bg-main: #FFFDF9;
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --text-main: #2B211F;
+            --hero-gradient: linear-gradient(135deg, #FFF5F0 0%, #FFF0E6 50%, #F5F9F4 100%);
+        }
+
+        /* Dynamic Palette Flavor Classes */
+        body.theme-peach {
+            --primary: #FF6B4A;
+            --secondary: #FF8F3D;
+            --accent: #30A86A;
+            --hero-gradient: linear-gradient(135deg, #FFF4F0 0%, #FFEBE3 50%, #FAF0E6 100%);
+        }
+        body.theme-berry {
+            --primary: #E63946;
+            --secondary: #FF758F;
+            --accent: #805AD5;
+            --hero-gradient: linear-gradient(135deg, #FFF0F2 0%, #FDE2E4 50%, #F0E6FF 100%);
+        }
+        body.theme-mint {
+            --primary: #2A9D8F;
+            --secondary: #E76F51;
+            --accent: #264653;
+            --hero-gradient: linear-gradient(135deg, #E8F8F5 0%, #E0F2F1 50%, #FFF3E0 100%);
+        }
+        body.theme-mango {
+            --primary: #F4A261;
+            --secondary: #E76F51;
+            --accent: #2A9D8F;
+            --hero-gradient: linear-gradient(135deg, #FFF8E7 0%, #FFE0B2 50%, #E8F5E9 100%);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-dynamic-primary { background-color: var(--primary); }
+        .text-dynamic-primary { color: var(--primary); }
+        .border-dynamic-primary { border-color: var(--primary); }
+        .bg-dynamic-secondary { background-color: var(--secondary); }
+        .bg-dynamic-accent { background-color: var(--accent); }
+        .text-dynamic-accent { color: var(--accent); }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 235, 225, 0.6);
+            box-shadow: 0 10px 30px -10px rgba(43, 33, 31, 0.05);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 35px -10px rgba(255, 107, 74, 0.15);
+            border-color: rgba(255, 107, 74, 0.3);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F7F2EE;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FFB39F;
+            border-radius: 10px;
+        }
+
+        /* Pulse animation for timer */
+        @keyframes timerPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+        .timer-running {
+            animation: timerPulse 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="theme-peach antialiased min-h-screen flex flex-col selection:bg-orange-100 selection:text-orange-600">
+
+    <!-- Top Announcement & Theme Flavor Bar -->
+    <div class="bg-cocoa-900 text-amber-100 text-xs py-2 px-4 flex flex-wrap justify-between items-center gap-2 border-b border-cocoa-800">
+        <div class="flex items-center gap-2">
+            <span class="bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">NEW</span>
+            <span>✨ Updated with 22+ Gourmet Recipes &amp; Live Step-by-Step Cooking Assistant!</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="hidden sm:inline text-cocoa-100/70">Palette Tint:</span>
+            <div class="flex items-center gap-1.5">
+                <button onclick="setTheme('peach')" class="w-5 h-5 rounded-full bg-[#FF6B4A] ring-2 ring-white/30 hover:scale-110 transition" title="Peach Punch"></button>
+                <button onclick="setTheme('berry')" class="w-5 h-5 rounded-full bg-[#E63946] ring-2 ring-white/30 hover:scale-110 transition" title="Berry Blush"></button>
+                <button onclick="setTheme('mint')" class="w-5 h-5 rounded-full bg-[#2A9D8F] ring-2 ring-white/30 hover:scale-110 transition" title="Mint Fresh"></button>
+                <button onclick="setTheme('mango')" class="w-5 h-5 rounded-full bg-[#F4A261] ring-2 ring-white/30 hover:scale-110 transition" title="Warm Mango"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-orange-100/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-coral-500 to-amber-500 flex items-center justify-center text-white text-2xl shadow-lg shadow-orange-500/20 transform -rotate-3 hover:rotate-0 transition">
+                        <i class="fa-solid font-bold fa-utensils"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif font-bold text-2xl tracking-tight text-cocoa-900 block leading-none">Recipe<span class="text-dynamic-primary">Verse</span></span>
+                        <span class="text-[11px] font-semibold tracking-wider uppercase text-cocoa-800/60 block mt-0.5">Discover • Cook • Share</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-cocoa-800/40"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Search 22+ dishes, ingredients, tags..." onkeyup="handleSearch(this.value)" class="w-full pl-11 pr-4 py-2.5 rounded-full bg-cocoa-50/80 border border-orange-100 text-cocoa-900 placeholder-cocoa-800/40 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white text-sm transition">
+                    </div>
+                </div>
+
+                <!-- Nav Quick Actions -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <button onclick="navigateTo('fridge')" class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-xs border border-emerald-200/80 hover:bg-emerald-100 transition shadow-sm">
+                        <i class="fa-solid fa-cookie-bite"></i>
+                        <span>Fridge Matcher</span>
+                    </button>
+
+                    <button onclick="toggleShoppingList()" class="relative p-2.5 rounded-full bg-cocoa-50 text-cocoa-800 hover:bg-orange-50 transition border border-orange-100">
+                        <i class="fa-solid fa-basket-shopping text-lg text-dynamic-primary"></i>
+                        <span id="cartBadgeCount" class="absolute -top-1 -right-1 w-5 h-5 bg-dynamic-primary text-white font-bold text-[10px] rounded-full flex items-center justify-center shadow-md">0</span>
+                    </button>
+
+                    <button onclick="navigateTo('favorites')" class="p-2.5 rounded-full bg-cocoa-50 text-cocoa-800 hover:bg-orange-50 transition border border-orange-100">
+                        <i class="fa-solid fa-heart text-lg text-rose-500"></i>
+                    </button>
+
+                    <button onclick="navigateTo('camera')" class="hidden lg:flex items-center gap-2 px-4 py-2.5 rounded-full bg-dynamic-primary text-white font-semibold text-xs hover:opacity-90 transition shadow-md shadow-orange-500/20">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Snap Dish</span>
+                    </button>
+
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-cocoa-800">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Subnav (Desktop) -->
+        <div class="hidden md:block border-t border-orange-100/60 bg-white/40">
+            <div class="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto py-2.5 text-xs font-semibold custom-scrollbar">
+                <button onclick="filterByCategory('All')" class="category-btn active font-bold text-dynamic-primary whitespace-nowrap px-3 py-1 rounded-full bg-orange-100/80">All Recipes</button>
+                <button onclick="filterByCategory('Indian')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Indian Cuisine</button>
+                <button onclick="filterByCategory('Asian')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Asian Bowls</button>
+                <button onclick="filterByCategory('Italian')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Italian Classics</button>
+                <button onclick="filterByCategory('Mexican')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Mexican Spice</button>
+                <button onclick="filterByCategory('Vegetarian')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Vegetarian</button>
+                <button onclick="filterByCategory('Vegan')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Vegan</button>
+                <button onclick="filterByCategory('Quick & Easy')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Quick &amp; Easy (&lt;20m)</button>
+                <button onclick="filterByCategory('Desserts')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Desserts &amp; Sweets</button>
+                <button onclick="filterByCategory('Breakfast')" class="category-btn text-cocoa-800 hover:text-orange-600 whitespace-nowrap px-3 py-1 rounded-full">Breakfast</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Main Dynamic Views Container -->
+    <main id="appContent" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Content injects here via JS -->
+    </main>
+
+    <!-- Persistent Shopping List Drawer -->
+    <div id="shoppingDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-orange-100">
+        <div class="p-6 bg-cocoa-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-dynamic-primary flex items-center justify-center text-white">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="font-serif font-bold text-lg">Pantry Shopping List</h3>
+                    <p class="text-xs text-amber-200/80" id="cartCountSubtitle">0 items collected</p>
+                </div>
+            </div>
+            <button onclick="toggleShoppingList()" class="text-cocoa-100 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <div class="p-4 bg-orange-50/50 border-b border-orange-100 flex items-center justify-between">
+            <span class="text-xs font-semibold text-cocoa-800">Check items as you shop</span>
+            <button onclick="clearShoppingList()" class="text-xs text-rose-600 hover:underline font-semibold">Clear All</button>
+        </div>
+
+        <div id="shoppingListContainer" class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar">
+            <!-- Items injected dynamically -->
+        </div>
+
+        <div class="p-6 border-t border-orange-100 bg-cocoa-50/50">
+            <button onclick="copyShoppingList()" class="w-full py-3 rounded-2xl bg-cocoa-900 text-white font-bold text-sm hover:bg-cocoa-800 transition flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-copy"></i>
+                <span>Copy List to Clipboard</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Full-Screen Interactive Cooking Mode Modal -->
+    <div id="cookingModal" class="fixed inset-0 z-50 bg-cocoa-900/95 backdrop-blur-lg hidden flex-col text-white">
+        <!-- Top Cooking Bar -->
+        <div class="p-4 sm:p-6 border-b border-white/10 flex items-center justify-between bg-black/20">
+            <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="font-bold text-sm tracking-widest uppercase text-amber-300">Live Hands-Free Cooking Assistant</span>
+            </div>
+            <button onclick="exitCookingMode()" class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold transition">
+                Exit Mode <i class="fa-solid fa-xmark ml-1"></i>
+            </button>
+        </div>
+
+        <!-- Cooking Content Container -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-10 max-w-4xl mx-auto w-full flex flex-col justify-between">
+            <div>
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <h2 id="cookRecipeTitle" class="font-serif text-2xl sm:text-4xl font-bold text-amber-100">Recipe Name</h2>
+                    <span id="cookStepBadge" class="px-4 py-1.5 rounded-full bg-dynamic-primary text-white font-extrabold text-sm shadow-md">Step 1 of 5</span>
+                </div>
+
+                <!-- Timer & Voice Controls Card -->
+                <div class="glass-card p-6 rounded-3xl bg-white/10 border-white/10 mb-8 flex flex-wrap items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs uppercase tracking-wider text-amber-200/80 font-bold block">Recommended Step Timer</span>
+                            <span id="cookTimerDisplay" class="font-mono text-3xl font-extrabold text-white">05:00</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="btnStartTimer" onclick="toggleTimer()" class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-600 transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Start
+                        </button>
+                        <button onclick="resetTimer()" class="px-4 py-2.5 rounded-xl bg-white/10 text-white font-bold text-xs hover:bg-white/20 transition">
+                            Reset
+                        </button>
+                        <button onclick="speakStep()" class="p-2.5 rounded-xl bg-dynamic-primary text-white font-bold hover:opacity-90 transition text-sm" title="Read Aloud">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instruction Card -->
+                <div class="p-8 rounded-3xl bg-white/5 border border-white/10 shadow-2xl mb-8">
+                    <h3 class="text-xs uppercase font-extrabold tracking-widest text-amber-400 mb-2">Instructions</h3>
+                    <p id="cookStepInstruction" class="text-xl sm:text-2xl leading-relaxed text-cocoa-100 font-medium">
+                        Loading instructions...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Step Navigation -->
+            <div class="flex items-center justify-between gap-4 pt-6 border-t border-white/10">
+                <button id="btnPrevStep" onclick="prevStep()" class="px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 font-bold text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Step
+                </button>
+                <button id="btnNextStep" onclick="nextStep()" class="px-8 py-3.5 rounded-2xl bg-dynamic-primary font-bold text-sm hover:opacity-90 transition flex items-center gap-2 shadow-lg shadow-orange-500/30">
+                    <span>Next Step</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Box -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-cocoa-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-orange-200/20 flex items-center gap-3 text-sm font-semibold pointer-events-none">
+        <div id="toastIcon" class="text-emerald-400"><i class="fa-solid fa-circle-check text-lg"></i></div>
+        <span id="toastMessage">Notification message here</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-cocoa-900 text-cocoa-100 border-t border-cocoa-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-dynamic-primary flex items-center justify-center text-white font-bold">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <span class="font-serif font-bold text-xl text-white">RecipeVerse</span>
+                    </div>
+                    <p class="text-xs text-cocoa-100/70 leading-relaxed mb-4">
+                        Empowering passionate home chefs worldwide with intelligent ingredient matching, step-by-step audio cooking, and interactive community recipe sharing.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm mb-4">Explore Cuisines</h4>
+                    <ul class="space-y-2 text-xs text-cocoa-100/70">
+                        <li><a href="#" onclick="filterByCategory('Indian'); return false;" class="hover:text-amber-300">Indian Butter Chicken &amp; Biryani</a></li>
+                        <li><a href="#" onclick="filterByCategory('Italian'); return false;" class="hover:text-amber-300">Woodfired Pizzas &amp; Pasta</a></li>
+                        <li><a href="#" onclick="filterByCategory('Asian'); return false;" class="hover:text-amber-300">Ramen, Poke &amp; Sticky Rice</a></li>
+                        <li><a href="#" onclick="filterByCategory('Mexican'); return false;" class="hover:text-amber-300">Tacos, Churros &amp; Guac</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm mb-4">Special Features</h4>
+                    <ul class="space-y-2 text-xs text-cocoa-100/70">
+                        <li><a href="#" onclick="navigateTo('fridge'); return false;" class="hover:text-amber-300">Smart Fridge Matcher</a></li>
+                        <li><a href="#" onclick="navigateTo('camera'); return false;" class="hover:text-amber-300">WebRTC Dish Snap Studio</a></li>
+                        <li><a href="#" onclick="navigateTo('classes'); return false;" class="hover:text-amber-300">Masterclass Cooking Enrollment</a></li>
+                        <li><a href="#" onclick="toggleShoppingList(); return false;" class="hover:text-amber-300">Dynamic Shopping Drawer</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm mb-4">Join Culinary Community</h4>
+                    <p class="text-xs text-cocoa-100/70 mb-3">Get weekly handpicked gourmet recipes right in your inbox.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Your email..." class="bg-cocoa-800 text-white text-xs px-3 py-2 rounded-xl focus:outline-none w-full border border-white/10">
+                        <button onclick="showToast('Subscribed to RecipeVerse Digest!')" class="bg-dynamic-primary text-white text-xs font-bold px-3 py-2 rounded-xl hover:opacity-90">Join</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-6 flex flex-wrap justify-between items-center text-xs text-cocoa-100/50 gap-4">
+                <p>&copy; 2026 RecipeVerse Inc. Crafted with passion for food lovers worldwide.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="hover:underline">Privacy Policy</a>
+                    <a href="#" class="hover:underline">Terms of Service</a>
+                    <a href="#" class="hover:underline">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Script & Complete Recipe Database -->
+    <script>
+        /* ==========================================================================
+           22+ RICH DETAILED RECIPES DATABASE
+           ========================================================================== */
+        const RECIPES_DATABASE = [
+            {
+                id: "1",
+                title: "Creamy Royal Butter Chicken",
+                category: "Indian",
+                prepTime: "20 min",
+                cookTime: "30 min",
+                servings: 4,
+                difficulty: "Medium",
+                rating: 4.9,
+                reviewsCount: 320,
+                calories: "540 kcal",
+                image: "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=800&q=80",
+                description: "Tender chicken chunks marinated in spiced yogurt, simmered in a velvety tomato, cream, and butter gravy with aromatic fenugreek.",
+                tags: ["Non-Vegetarian", "Indian", "High-Protein", "Gluten-Free"],
+                macros: { protein: "42g", carbs: "14g", fat: "32g" },
+                ingredients: [
+                    { name: "Chicken Thighs (Boneless)", qty: 600, unit: "g", img: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Plain Greek Yogurt", qty: 150, unit: "g", img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Tomato Puree", qty: 400, unit: "g", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Heavy Cream", qty: 100, unit: "ml", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Unsalted Butter", qty: 50, unit: "g", img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Garam Masala & Spices", qty: 2, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Marinate chicken in yogurt, lemon, garlic, and garam masala for 30 minutes.",
+                    "Sear chicken pieces in a hot skillet until charred at edges (approx 6-8 min).",
+                    "Melt butter in pan, add ginger, garlic, and tomato puree. Simmer for 15 minutes.",
+                    "Blend gravy smooth, stir in heavy cream and crushed dried fenugreek leaves (kasuri methi).",
+                    "Add cooked chicken into velvety sauce, simmer 5 mins, and serve hot with garlic naan!"
+                ]
+            },
+            {
+                id: "2",
+                title: "Crispy Tofu Tonkotsu Ramen",
+                category: "Asian",
+                prepTime: "15 min",
+                cookTime: "25 min",
+                servings: 2,
+                difficulty: "Medium",
+                rating: 4.8,
+                reviewsCount: 198,
+                calories: "460 kcal",
+                image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
+                description: "Rich savory miso-sesame broth packed with ramen noodles, pan-seared crispy tofu cubes, soft-boiled eggs, and scallions.",
+                tags: ["Vegetarian", "Asian", "Quick & Easy"],
+                macros: { protein: "22g", carbs: "62g", fat: "16g" },
+                ingredients: [
+                    { name: "Ramen Noodles", qty: 200, unit: "g", img: "https://images.unsplash.com/photo-1612927601601-6638404737ce?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Firm Tofu", qty: 250, unit: "g", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Miso Paste & Sesame Oil", qty: 3, unit: "tbsp", img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Vegetable Broth", qty: 750, unit: "ml", img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Soft-Boiled Eggs", qty: 2, unit: "pcs", img: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Press tofu to drain water, cut into cubes, and sear until golden and crisp.",
+                    "Whisk miso paste, tahini, and garlic into simmering vegetable broth.",
+                    "Boil ramen noodles according to package instructions until al dente.",
+                    "Assemble bowls: broth, noodles, crispy tofu, halved eggs, pak choi, and chili oil."
+                ]
+            },
+            {
+                id: "3",
+                title: "Smokey Paneer Tikka Masala",
+                category: "Indian",
+                prepTime: "25 min",
+                cookTime: "20 min",
+                servings: 4,
+                difficulty: "Medium",
+                rating: 4.9,
+                reviewsCount: 245,
+                calories: "480 kcal",
+                image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80",
+                description: "Char-grilled cottage cheese cubes with bell peppers in a rich onion-tomato spiced gravy.",
+                tags: ["Vegetarian", "Indian", "High-Protein"],
+                macros: { protein: "24g", carbs: "18g", fat: "34g" },
+                ingredients: [
+                    { name: "Fresh Paneer Cubes", qty: 400, unit: "g", img: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Bell Peppers (Diced)", qty: 2, unit: "pcs", img: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Onion-Tomato Puree", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Kashmiri Red Chili & Spices", qty: 2, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Skewer paneer and bell peppers; brush with yogurt spice marinade and roast/grill.",
+                    "Sauté onions, ginger-garlic paste, and tomato gravy until oil separates.",
+                    "Add roasted paneer and peppers into gravy, finish with fresh cilantro and cream."
+                ]
+            },
+            {
+                id: "4",
+                title: "Authentic Woodfired Margherita Pizza",
+                category: "Italian",
+                prepTime: "20 min",
+                cookTime: "12 min",
+                servings: 2,
+                difficulty: "Easy",
+                rating: 4.7,
+                reviewsCount: 156,
+                calories: "520 kcal",
+                image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=800&q=80",
+                description: "Crispy artisan crust topped with sweet San Marzano tomato sauce, fresh mozzarella, and aromatic basil leaves.",
+                tags: ["Vegetarian", "Italian", "Quick & Easy"],
+                macros: { protein: "18g", carbs: "65g", fat: "20g" },
+                ingredients: [
+                    { name: "Pizza Dough Ball", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1589187151053-5ec8818e661b?auto=format&fit=crop&w=120&q=80" },
+                    { name: "San Marzano Tomatoes", qty: 150, unit: "g", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Fresh Mozzarella Cheese", qty: 125, unit: "g", img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Fresh Basil Leaves", unit: "handful", qty: 1, img: "https://images.unsplash.com/photo-1608683233565-922410206253?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Stretch dough manually on floured surface into a 12-inch circle.",
+                    "Spread crushed San Marzano tomato sauce and tear fresh mozzarella on top.",
+                    "Bake at highest oven temperature (or pizza oven) until crust is blistered (8-10 mins).",
+                    "Garnish with fresh basil and extra virgin olive oil drizzle."
+                ]
+            },
+            {
+                id: "5",
+                title: "Thai Mango Sticky Rice",
+                category: "Desserts",
+                prepTime: "10 min",
+                cookTime: "25 min",
+                servings: 3,
+                difficulty: "Easy",
+                rating: 4.9,
+                reviewsCount: 210,
+                calories: "380 kcal",
+                image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80",
+                description: "Sweet glutinous sticky rice soaked in warm coconut milk syrup paired with ripe yellow mango slices.",
+                tags: ["Vegan", "Desserts", "Asian", "Gluten-Free"],
+                macros: { protein: "5g", carbs: "78g", fat: "10g" },
+                ingredients: [
+                    { name: "Sticky Glutinous Rice", qty: 200, unit: "g", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Coconut Milk", qty: 250, unit: "ml", img: "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Ripe Mangoes", qty: 2, unit: "pcs", img: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Pinch of Salt & Sugar", qty: 3, unit: "tbsp", img: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Steam sticky rice for 20 minutes until translucent and soft.",
+                    "Heat coconut milk with sugar and salt; pour half over cooked warm rice.",
+                    "Let rice absorb syrup for 15 minutes.",
+                    "Slice sweet mangoes and serve alongside rice with remaining coconut drizzle."
+                ]
+            },
+            {
+                id: "6",
+                title: "Spicy Fresh Salmon Poke Bowl",
+                category: "Asian",
+                prepTime: "15 min",
+                cookTime: "0 min",
+                servings: 2,
+                difficulty: "Easy",
+                rating: 4.8,
+                reviewsCount: 175,
+                calories: "490 kcal",
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+                description: "Sushi-grade raw salmon cubes tossed in spicy sriracha mayo over seasoned rice, edamame, and avocado.",
+                tags: ["Non-Vegetarian", "Asian", "High-Protein", "Quick & Easy"],
+                macros: { protein: "32g", carbs: "48g", fat: "18g" },
+                ingredients: [
+                    { name: "Sushi-Grade Salmon", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Sushi Rice (Cooked)", qty: 250, unit: "g", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Ripe Avocado", qty: 1, unit: "pcs", img: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Edamame & Cucumbers", qty: 100, unit: "g", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Dice salmon into bite-sized cubes and toss with soy sauce, sesame oil, and sriracha.",
+                    "Scoop warm sushi rice into bowl base.",
+                    "Arrange salmon, sliced avocado, shelled edamame, cucumber, and seaweed salad.",
+                    "Drizzle with spicy mayo and sprinkle toasted sesame seeds."
+                ]
+            },
+            {
+                id: "7",
+                title: "Sourdough Avocado Guacamole Toast",
+                category: "Breakfast",
+                prepTime: "10 min",
+                cookTime: "5 min",
+                servings: 1,
+                difficulty: "Easy",
+                rating: 4.7,
+                reviewsCount: 130,
+                calories: "320 kcal",
+                image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80",
+                description: "Crispy toasted sourdough slice layered with smashed lime avocado, poached egg, microgreens, and chili flakes.",
+                tags: ["Vegetarian", "Breakfast", "Quick & Easy"],
+                macros: { protein: "14g", carbs: "30g", fat: "18g" },
+                ingredients: [
+                    { name: "Artisan Sourdough", qty: 1, unit: "slice", img: "https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Hass Avocado", qty: 1, unit: "pcs", img: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Poached Egg", qty: 1, unit: "pcs", img: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Lime Juice & Chili Flakes", qty: 1, unit: "tsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Toast sourdough bread slice until golden and crisp.",
+                    "Mash avocado with lime juice, sea salt, and black pepper.",
+                    "Spread generously on toast, top with a poached egg, and finish with chili flakes."
+                ]
+            },
+            {
+                id: "8",
+                title: "Decadent Molten Chocolate Lava Cake",
+                category: "Desserts",
+                prepTime: "15 min",
+                cookTime: "12 min",
+                servings: 2,
+                difficulty: "Medium",
+                rating: 4.9,
+                reviewsCount: 310,
+                calories: "450 kcal",
+                image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+                description: "Rich dark chocolate individual cakes with a warm, gooey liquid chocolate center served with vanilla gelato.",
+                tags: ["Vegetarian", "Desserts"],
+                macros: { protein: "7g", carbs: "48g", fat: "26g" },
+                ingredients: [
+                    { name: "70% Dark Chocolate", qty: 100, unit: "g", img: "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Butter", qty: 50, unit: "g", img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Eggs & Yolk", qty: 2, unit: "pcs", img: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Powdered Sugar & Flour", qty: 3, unit: "tbsp", img: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Melt chocolate and butter together until smooth.",
+                    "Whisk eggs and sugar until pale; fold in chocolate mix and flour.",
+                    "Pour into buttered ramekins and bake at 200°C (400°F) for exactly 12 minutes.",
+                    "Invert onto plates and serve immediately while warm."
+                ]
+            },
+            {
+                id: "9",
+                title: "Street Style Mexican Street Tacos",
+                category: "Mexican",
+                prepTime: "15 min",
+                cookTime: "15 min",
+                servings: 3,
+                difficulty: "Easy",
+                rating: 4.8,
+                reviewsCount: 220,
+                calories: "410 kcal",
+                image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=800&q=80",
+                description: "Warm corn tortillas stuffed with spiced seared meat or beans, diced onions, cilantro, and tangy salsa verde.",
+                tags: ["Mexican", "Quick & Easy"],
+                macros: { protein: "28g", carbs: "35g", fat: "16g" },
+                ingredients: [
+                    { name: "Corn Tortillas", qty: 6, unit: "pcs", img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Seasoned Steak or Beans", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Cilantro & Diced Onions", qty: 1, unit: "cup", img: "https://images.unsplash.com/photo-1608683233565-922410206253?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Lime & Salsa Verde", qty: 4, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Sear marinated meat or spiced black beans in a hot skillet.",
+                    "Warm corn tortillas on a dry skillet until pliable.",
+                    "Fill tortillas, garnish with onions, chopped cilantro, and fresh lime squeeze."
+                ]
+            },
+            {
+                id: "10",
+                title: "Hyderabadi Vegetable Dum Biryani",
+                category: "Indian",
+                prepTime: "30 min",
+                cookTime: "40 min",
+                servings: 4,
+                difficulty: "Hard",
+                rating: 4.9,
+                reviewsCount: 410,
+                calories: "510 kcal",
+                image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80",
+                description: "Fragrant long-grain basmati rice layered with spiced marinated vegetables, fried onions, and saffron.",
+                tags: ["Vegetarian", "Indian", "Gluten-Free"],
+                macros: { protein: "12g", carbs: "82g", fat: "14g" },
+                ingredients: [
+                    { name: "Basmati Rice", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Mixed Vegetables (Carrots, Peas)", qty: 300, unit: "g", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Biryani Spices & Saffron", qty: 2, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Crispy Fried Onions", qty: 100, unit: "g", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Parboil basmati rice with whole spices (cardamom, cloves, bay leaf).",
+                    "Cook spiced yogurt vegetable curry in a thick-bottom pot.",
+                    "Layer half-cooked rice over vegetable gravy, sprinkle fried onions, mint, and saffron water.",
+                    "Seal pot with foil and steam (dum) on low heat for 25 minutes."
+                ]
+            },
+            {
+                id: "11",
+                title: "Mediterranean Chickpea Quinoa Salad",
+                category: "Vegan",
+                prepTime: "15 min",
+                cookTime: "0 min",
+                servings: 2,
+                difficulty: "Easy",
+                rating: 4.7,
+                reviewsCount: 140,
+                calories: "340 kcal",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+                description: "Protein-rich salad with fluffy quinoa, chickpeas, cucumbers, cherry tomatoes, olives, and lemon oregano dressing.",
+                tags: ["Vegan", "Gluten-Free", "Quick & Easy"],
+                macros: { protein: "14g", carbs: "48g", fat: "11g" },
+                ingredients: [
+                    { name: "Cooked Quinoa", qty: 200, unit: "g", img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Canned Chickpeas", qty: 200, unit: "g", img: "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Cucumbers & Cherry Tomatoes", qty: 150, unit: "g", img: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Lemon Herb Olive Oil Dressing", qty: 3, unit: "tbsp", img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Combine cooled cooked quinoa, rinsed chickpeas, diced cucumbers, and tomatoes.",
+                    "Whisk extra virgin olive oil, lemon juice, dried oregano, salt, and pepper.",
+                    "Toss dressing through salad and serve chilled."
+                ]
+            },
+            {
+                id: "12",
+                title: "Classic Fluffy Berry Pancakes",
+                category: "Breakfast",
+                prepTime: "10 min",
+                cookTime: "10 min",
+                servings: 3,
+                difficulty: "Easy",
+                rating: 4.8,
+                reviewsCount: 280,
+                calories: "390 kcal",
+                image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=800&q=80",
+                description: "Thick golden pancakes layered with fresh blueberry compote, maple syrup, and whipped cream.",
+                tags: ["Vegetarian", "Breakfast", "Quick & Easy"],
+                macros: { protein: "9g", carbs: "68g", fat: "10g" },
+                ingredients: [
+                    { name: "All-Purpose Flour", qty: 200, unit: "g", img: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Fresh Blueberries & Strawberries", qty: 150, unit: "g", img: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Maple Syrup", qty: 4, unit: "tbsp", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Milk & Egg", qty: 200, unit: "ml", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Whisk flour, baking powder, milk, egg, and melted butter into smooth batter.",
+                    "Pour ladlefuls on buttered hot griddle until bubbles form, then flip.",
+                    "Serve stacked high with fresh berries and warm maple syrup."
+                ]
+            },
+            {
+                id: "13",
+                title: "Warm Soft Gulab Jamun",
+                category: "Desserts",
+                prepTime: "20 min",
+                cookTime: "20 min",
+                servings: 4,
+                difficulty: "Medium",
+                rating: 4.9,
+                reviewsCount: 380,
+                calories: "320 kcal",
+                image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+                description: "Melt-in-your-mouth milk solid dumplings fried to golden brown and soaked in cardamom rose syrup.",
+                tags: ["Vegetarian", "Desserts", "Indian"],
+                macros: { protein: "6g", carbs: "52g", fat: "11g" },
+                ingredients: [
+                    { name: "Milk Powder / Khoya", qty: 150, unit: "g", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Rose Water & Sugar Syrup", qty: 250, unit: "ml", img: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Cardamom & Pistachios", qty: 1, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Knead milk powder, flour, and ghee into soft smooth dough; roll into ball shapes.",
+                    "Deep fry on gentle low heat until deep golden mahogany brown.",
+                    "Soak warm dumplings in hot cardamom rose syrup for 2 hours before serving."
+                ]
+            },
+            {
+                id: "14",
+                title: "Crispy Golden Churros with Fudge",
+                category: "Mexican",
+                prepTime: "15 min",
+                cookTime: "15 min",
+                servings: 4,
+                difficulty: "Medium",
+                rating: 4.8,
+                reviewsCount: 190,
+                calories: "410 kcal",
+                image: "https://images.unsplash.com/photo-1624371414361-e670ef4889d6?auto=format&fit=crop&w=800&q=80",
+                description: "Spanish-Mexican fried dough pastries dusted in cinnamon sugar served with warm dark chocolate sauce.",
+                tags: ["Vegetarian", "Mexican", "Desserts"],
+                macros: { protein: "5g", carbs: "55g", fat: "19g" },
+                ingredients: [
+                    { name: "Churro Dough Mix", qty: 250, unit: "g", img: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Cinnamon Sugar Dusting", qty: 4, unit: "tbsp", img: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Dark Chocolate Dipping Fudge", qty: 100, unit: "ml", img: "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Pipe star-shaped dough directly into hot oil and fry until crisp and golden.",
+                    "Immediately roll hot churros in cinnamon sugar mix.",
+                    "Dip into warm thick chocolate sauce and enjoy!"
+                ]
+            },
+            {
+                id: "15",
+                title: "Iced Ceremonial Matcha Green Tea Latte",
+                category: "Breakfast",
+                prepTime: "5 min",
+                cookTime: "0 min",
+                servings: 1,
+                difficulty: "Easy",
+                rating: 4.9,
+                reviewsCount: 230,
+                calories: "140 kcal",
+                image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=800&q=80",
+                description: "Whisked ceremonial Uji matcha powder layered over chilled oat milk and ice cubes.",
+                tags: ["Vegan", "Breakfast", "Quick & Easy"],
+                macros: { protein: "3g", carbs: "12g", fat: "4g" },
+                ingredients: [
+                    { name: "Japanese Matcha Powder", qty: 2, unit: "tsp", img: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Oat / Almond Milk", qty: 200, unit: "ml", img: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=120&q=80" },
+                    { name: "Agave / Honey", qty: 1, unit: "tbsp", img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=120&q=80" }
+                ],
+                instructions: [
+                    "Whisk matcha powder with warm water using a bamboo whisk until frothy.",
+                    "Fill glass with ice cubes and oat milk.",
+                    "Pour green matcha foam on top and sweeten as desired."
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           GLOBAL STATE MANAGEMENT
+           ========================================================================== */
+        let state = {
+            currentView: 'home', // 'home', 'detail', 'fridge', 'camera', 'favorites', 'classes'
+            selectedCategory: 'All',
+            searchQuery: '',
+            activeRecipe: null,
+            favorites: JSON.parse(localStorage.getItem('rv_favs')) || ['1', '4', '6'],
+            shoppingList: JSON.parse(localStorage.getItem('rv_cart')) || [
+                { id: '1', name: 'Fresh Mozzarella Cheese', qty: '125 g', checked: false },
+                { id: '2', name: 'San Marzano Tomatoes', qty: '150 g', checked: true }
+            ],
+            cookingStep: 0,
+            timerSeconds: 300,
+            timerInterval: null,
+            isTimerRunning: false,
+            fridgeIngredients: ['Chicken', 'Yogurt', 'Tomatoes', 'Garlic', 'Paneer']
+        };
+
+        /* ==========================================================================
+           THEME SWITCHER
+           ========================================================================== */
+        function setTheme(theme) {
+            document.body.className = `theme-${theme} antialiased min-h-screen flex flex-col selection:bg-orange-100 selection:text-orange-600`;
+            showToast(`Theme changed to ${theme.toUpperCase()} flavor!`);
+        }
+
+        /* ==========================================================================
+           NAVIGATION & VIEW ROUTING
+           ========================================================================== */
+        function navigateTo(view, params = null) {
+            state.currentView = view;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (view === 'detail' && params) {
+                state.activeRecipe = RECIPES_DATABASE.find(r => r.id === params) || RECIPES_DATABASE[0];
+            }
+
+            renderView();
+        }
+
+        function renderView() {
+            const container = document.getElementById('appContent');
+            
+            switch (state.currentView) {
+                case 'home':
+                    container.innerHTML = renderHomeView();
+                    break;
+                case 'detail':
+                    container.innerHTML = renderDetailView(state.activeRecipe);
+                    break;
+                case 'fridge':
+                    container.innerHTML = renderFridgeView();
+                    break;
+                case 'camera':
+                    container.innerHTML = renderCameraView();
+                    initCameraStream();
+                    break;
+                case 'favorites':
+                    container.innerHTML = renderFavoritesView();
+                    break;
+                case 'classes':
+                    container.innerHTML = renderClassesView();
+                    break;
+                default:
+                    container.innerHTML = renderHomeView();
+            }
+
+            updateCartBadge();
+        }
+
+        /* ==========================================================================
+           VIEW TEMPLATES
+           ========================================================================== */
+
+        // 1. HOME VIEW TEMPLATE
+        function renderHomeView() {
+            const filtered = RECIPES_DATABASE.filter(r => {
+                const matchesCat = state.selectedCategory === 'All' || 
+                                  r.category.toLowerCase() === state.selectedCategory.toLowerCase() ||
+                                  r.tags.some(t => t.toLowerCase() === state.selectedCategory.toLowerCase());
+                const matchesSearch = r.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                                      r.description.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                                      r.ingredients.some(i => i.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
+                return matchesCat && matchesSearch;
+            });
+
+            return `
+                <!-- Hero Section -->
+                <div class="relative rounded-3xl p-8 sm:p-12 mb-12 overflow-hidden shadow-xl border border-orange-100/80" style="background: var(--hero-gradient)">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-200/60 text-orange-900 font-bold text-xs uppercase tracking-wider mb-4">
+                            <i class="fa-solid fa-fire text-coral-500"></i> Modern Gourmet Kitchen
+                        </span>
+                        <h1 class="font-serif font-extrabold text-4xl sm:text-6xl text-cocoa-900 tracking-tight leading-tight mb-4">
+                            Master Great Cooking, <span class="text-dynamic-primary underline decoration-orange-300">Step by Step</span>.
+                        </h1>
+                        <p class="text-cocoa-800/80 text-sm sm:text-base leading-relaxed mb-8">
+                            Explore 22+ hand-crafted culinary masterpieces with live step-by-step audio cooking, interactive serving scaling, and smart fridge ingredient matching.
+                        </p>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <button onclick="navigateTo('fridge')" class="px-6 py-3.5 rounded-2xl bg-dynamic-primary text-white font-bold text-sm shadow-lg shadow-orange-500/25 hover:opacity-90 transition flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Open Fridge Matcher
+                            </button>
+                            <button onclick="navigateTo('classes')" class="px-6 py-3.5 rounded-2xl bg-white text-cocoa-900 font-bold text-sm shadow-sm hover:bg-orange-50 transition border border-orange-100">
+                                Explore Masterclasses
+                            </button>
+                        </div>
+                    </div>
+                    <div class="absolute right-0 top-0 bottom-0 w-1/3 hidden lg:block opacity-20 pointer-events-none bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80')"></div>
+                </div>
+
+                <!-- Category Chips (Mobile/Main) -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-serif font-bold text-2xl text-cocoa-900">Featured Recipes (${filtered.length})</h2>
+                    <div class="text-xs font-bold text-cocoa-800/60">Showing: <span class="text-dynamic-primary">${state.selectedCategory}</span></div>
+                </div>
+
+                <!-- Recipe Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${filtered.length > 0 ? filtered.map(recipe => renderRecipeCard(recipe)).join('') : `
+                        <div class="col-span-full py-16 text-center glass-card rounded-3xl">
+                            <i class="fa-solid fa-utensils text-4xl text-orange-300 mb-3 block"></i>
+                            <h3 class="font-bold text-lg text-cocoa-900 mb-1">No recipes found</h3>
+                            <p class="text-xs text-cocoa-800/60">Try clearing your search query or picking another category.</p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // Recipe Card Component
+        function renderRecipeCard(recipe) {
+            const isFav = state.favorites.includes(recipe.id);
+            return `
+                <div class="glass-card glass-card-hover rounded-3xl overflow-hidden flex flex-col justify-between cursor-pointer" onclick="navigateTo('detail', '${recipe.id}')">
+                    <div>
+                        <!-- Image Container -->
+                        <div class="relative h-52 overflow-hidden">
+                            <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-full object-cover transform hover:scale-105 transition duration-500">
+                            <button onclick="event.stopPropagation(); toggleFavorite('${recipe.id}')" class="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-rose-500 hover:scale-110 transition shadow-md">
+                                <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart text-base"></i>
+                            </button>
+                            <span class="absolute bottom-3 left-3 bg-cocoa-900/80 backdrop-blur-md text-amber-200 text-[11px] font-bold px-3 py-1 rounded-full border border-white/20">
+                                ${recipe.category}
+                            </span>
+                        </div>
+
+                        <!-- Info Body -->
+                        <div class="p-6">
+                            <div class="flex items-center justify-between text-xs text-cocoa-800/70 mb-2">
+                                <span><i class="fa-regular fa-clock text-dynamic-primary mr-1"></i> ${recipe.cookTime}</span>
+                                <span><i class="fa-solid fa-fire text-amber-500 mr-1"></i> ${recipe.calories}</span>
+                                <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">${recipe.difficulty}</span>
+                            </div>
+
+                            <h3 class="font-serif font-bold text-lg text-cocoa-900 line-clamp-1 mb-2 hover:text-dynamic-primary transition">${recipe.title}</h3>
+                            <p class="text-xs text-cocoa-800/70 line-clamp-2 leading-relaxed mb-4">${recipe.description}</p>
+                            
+                            <!-- Tags -->
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                ${recipe.tags.slice(0, 3).map(t => `<span class="text-[10px] bg-orange-100/60 text-orange-900 font-semibold px-2 py-0.5 rounded-md">${t}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="px-6 pb-6 pt-2 border-t border-orange-100/60 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                            <span class="font-bold text-xs text-cocoa-900">${recipe.rating}</span>
+                            <span class="text-[11px] text-cocoa-800/50">(${recipe.reviewsCount})</span>
+                        </div>
+                        <span class="text-xs font-extrabold text-dynamic-primary flex items-center gap-1">
+                            Cook Now <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. RECIPE DETAIL VIEW TEMPLATE
+        function renderDetailView(recipe) {
+            if (!recipe) return `<div>Recipe not found</div>`;
+            const isFav = state.favorites.includes(recipe.id);
+
+            return `
+                <div class="space-y-8 animate-fadeIn">
+                    <!-- Breadcrumbs & Actions -->
+                    <div class="flex items-center justify-between">
+                        <button onclick="navigateTo('home')" class="text-xs font-bold text-cocoa-800/70 hover:text-cocoa-900 flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Recipes
+                        </button>
+                        <div class="flex items-center gap-3">
+                            <button onclick="toggleFavorite('${recipe.id}')" class="px-4 py-2 rounded-full bg-white border border-orange-100 text-xs font-bold text-rose-500 hover:bg-rose-50 transition flex items-center gap-2">
+                                <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i> ${isFav ? 'Saved' : 'Save Recipe'}
+                            </button>
+                            <button onclick="copyRecipeLink()" class="p-2 rounded-full bg-white border border-orange-100 text-xs text-cocoa-800 hover:bg-orange-50 transition">
+                                <i class="fa-solid fa-share-nodes"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Header Banner -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center glass-card p-6 sm:p-8 rounded-3xl">
+                        <div class="relative h-72 sm:h-96 rounded-2xl overflow-hidden shadow-lg">
+                            <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-dynamic-primary uppercase tracking-widest bg-orange-100 px-3 py-1 rounded-full">
+                                ${recipe.category}
+                            </span>
+                            <h1 class="font-serif font-extrabold text-3xl sm:text-5xl text-cocoa-900 tracking-tight mt-3 mb-4">
+                                ${recipe.title}
+                            </h1>
+                            <p class="text-cocoa-800/80 text-sm leading-relaxed mb-6">
+                                ${recipe.description}
+                            </p>
+
+                            <!-- Quick Stats -->
+                            <div class="grid grid-cols-3 gap-4 mb-6">
+                                <div class="p-3 bg-orange-50/60 rounded-2xl border border-orange-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-cocoa-800/60 block">Prep Time</span>
+                                    <span class="font-bold text-sm text-cocoa-900">${recipe.prepTime}</span>
+                                </div>
+                                <div class="p-3 bg-orange-50/60 rounded-2xl border border-orange-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-cocoa-800/60 block">Cook Time</span>
+                                    <span class="font-bold text-sm text-cocoa-900">${recipe.cookTime}</span>
+                                </div>
+                                <div class="p-3 bg-orange-50/60 rounded-2xl border border-orange-100 text-center">
+                                    <span class="text-[10px] uppercase font-bold text-cocoa-800/60 block">Calories</span>
+                                    <span class="font-bold text-sm text-cocoa-900">${recipe.calories}</span>
+                                </div>
+                            </div>
+
+                            <!-- Start Live Cooking Mode CTA -->
+                            <button onclick="startCookingMode('${recipe.id}')" class="w-full py-4 rounded-2xl bg-dynamic-primary text-white font-extrabold text-sm hover:opacity-90 transition shadow-lg shadow-orange-500/30 flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-circle-play text-lg"></i>
+                                <span>Start Interactive Step-by-Step Cooking</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ingredients & Macros Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Ingredients Scaler Box -->
+                        <div class="lg:col-span-2 glass-card p-6 sm:p-8 rounded-3xl">
+                            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                                <div>
+                                    <h2 class="font-serif font-bold text-2xl text-cocoa-900">Ingredients Breakdown</h2>
+                                    <p class="text-xs text-cocoa-800/60">Adjust serving quantity to scale ingredients dynamically</p>
+                                </div>
+
+                                <!-- Dynamic Servings Scaler -->
+                                <div class="flex items-center gap-3 bg-orange-50 p-1.5 rounded-2xl border border-orange-200/60">
+                                    <button onclick="scaleServings(-1)" class="w-8 h-8 rounded-xl bg-white text-cocoa-900 font-bold shadow-sm hover:bg-orange-100 transition flex items-center justify-center text-sm">-</button>
+                                    <span id="servingsDisplay" class="font-extrabold text-sm text-cocoa-900 px-2">${recipe.servings} Servings</span>
+                                    <button onclick="scaleServings(1)" class="w-8 h-8 rounded-xl bg-white text-cocoa-900 font-bold shadow-sm hover:bg-orange-100 transition flex items-center justify-center text-sm">+</button>
+                                </div>
+                            </div>
+
+                            <div id="ingredientsListContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                                ${renderIngredientsList(recipe, recipe.servings)}
+                            </div>
+
+                            <button onclick="addAllIngredientsToCart()" class="w-full py-3.5 rounded-2xl bg-cocoa-900 text-white font-bold text-xs hover:bg-cocoa-800 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>Add All Ingredients to Shopping Drawer</span>
+                            </button>
+                        </div>
+
+                        <!-- Macro Nutrients & Details -->
+                        <div class="space-y-6">
+                            <div class="glass-card p-6 rounded-3xl">
+                                <h3 class="font-serif font-bold text-lg text-cocoa-900 mb-4">Macro Breakdown</h3>
+                                <div class="space-y-3 text-xs font-semibold">
+                                    <div class="flex justify-between p-2.5 rounded-xl bg-orange-50/50">
+                                        <span class="text-cocoa-800/70">Protein</span>
+                                        <span class="font-bold text-cocoa-900">${recipe.macros.protein}</span>
+                                    </div>
+                                    <div class="flex justify-between p-2.5 rounded-xl bg-orange-50/50">
+                                        <span class="text-cocoa-800/70">Carbohydrates</span>
+                                        <span class="font-bold text-cocoa-900">${recipe.macros.carbs}</span>
+                                    </div>
+                                    <div class="flex justify-between p-2.5 rounded-xl bg-orange-50/50">
+                                        <span class="text-cocoa-800/70">Healthy Fats</span>
+                                        <span class="font-bold text-cocoa-900">${recipe.macros.fat}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cooking Tips Card -->
+                            <div class="p-6 rounded-3xl bg-amber-500/10 border border-amber-200 text-cocoa-900">
+                                <h4 class="font-bold text-sm mb-2 flex items-center gap-2 text-amber-800">
+                                    <i class="fa-solid fa-lightbulb"></i> Chef's Secret Tip
+                                </h4>
+                                <p class="text-xs text-cocoa-800/80 leading-relaxed">
+                                    For maximum flavor extraction, toast your dry spices in a warm pan for 30 seconds before incorporating into the wet base ingredients!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper to render scaled ingredients
+        function renderIngredientsList(recipe, baseServings) {
+            const currentServings = parseInt(document.getElementById('servingsDisplay')?.innerText || baseServings);
+            const ratio = currentServings / recipe.servings;
+
+            return recipe.ingredients.map(ing => {
+                const scaledQty = ing.qty ? (ing.qty * ratio).toFixed(ing.qty % 1 === 0 ? 0 : 1) : '';
+                return `
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-white border border-orange-100 shadow-sm">
+                        <img src="${ing.img}" alt="${ing.name}" class="w-10 h-10 rounded-xl object-cover">
+                        <div class="flex-1">
+                            <span class="font-semibold text-xs text-cocoa-900 block">${ing.name}</span>
+                            <span class="text-[11px] text-dynamic-primary font-bold">${scaledQty} ${ing.unit || ''}</span>
+                        </div>
+                        <button onclick="addSingleIngredientToCart('${ing.name}', '${scaledQty} ${ing.unit || ''}')" class="p-2 text-cocoa-800/40 hover:text-dynamic-primary transition" title="Add to list">
+                            <i class="fa-solid fa-plus-circle text-base"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 3. FRIDGE MATCHER VIEW TEMPLATE
+        function renderFridgeView() {
+            // Calculate percentage match
+            const matchedRecipes = RECIPES_DATABASE.map(recipe => {
+                const recipeIngs = recipe.ingredients.map(i => i.name.toLowerCase());
+                const matchingCount = state.fridgeIngredients.filter(userIng => 
+                    recipeIngs.some(ri => ri.includes(userIng.toLowerCase()))
+                ).length;
+                
+                const matchScore = Math.min(100, Math.round((matchingCount / Math.max(1, recipeIngs.length)) * 100 + 20));
+                return { ...recipe, matchScore };
+            }).sort((a,b) => b.matchScore - a.matchScore);
+
+            return `
+                <div class="space-y-8 animate-fadeIn max-w-5xl mx-auto">
+                    <div class="text-center max-w-2xl mx-auto">
+                        <span class="px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs uppercase tracking-wider">
+                            Smart Pantry Engine
+                        </span>
+                        <h1 class="font-serif font-extrabold text-3xl sm:text-5xl text-cocoa-900 mt-2 mb-3">
+                            What's in your fridge?
+                        </h1>
+                        <p class="text-xs sm:text-sm text-cocoa-800/70">
+                            Tell us what ingredients you have left, and RecipeVerse will match recipes with precision percentage scores!
+                        </p>
+                    </div>
+
+                    <!-- Ingredient Input Box -->
+                    <div class="glass-card p-6 sm:p-8 rounded-3xl border border-emerald-200/60">
+                        <label class="block text-xs font-bold text-cocoa-900 uppercase tracking-wider mb-3">Your Current Pantry Ingredients:</label>
+                        <div class="flex flex-wrap gap-2 mb-4" id="fridgePillsContainer">
+                            ${state.fridgeIngredients.map((ing, idx) => `
+                                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold text-xs">
+                                    ${ing}
+                                    <button onclick="removeFridgeIngredient(${idx})" class="hover:text-rose-600"><i class="fa-solid fa-xmark"></i></button>
+                                </span>
+                            `).join('')}
+                        </div>
+
+                        <div class="flex gap-2">
+                            <input type="text" id="addFridgeInput" placeholder="Add ingredient (e.g., Eggs, Spinach, Tomatoes)..." onkeydown="if(event.key==='Enter') addFridgeIngredient()" class="flex-1 px-4 py-3 rounded-2xl border border-orange-100 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                            <button onclick="addFridgeIngredient()" class="px-6 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Match Results -->
+                    <div>
+                        <h2 class="font-serif font-bold text-2xl text-cocoa-900 mb-6">Recipe Matches (${matchedRecipes.length})</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${matchedRecipes.map(recipe => `
+                                <div class="glass-card p-5 rounded-3xl flex gap-4 items-center cursor-pointer glass-card-hover" onclick="navigateTo('detail', '${recipe.id}')">
+                                    <img src="${recipe.image}" alt="${recipe.title}" class="w-24 h-24 rounded-2xl object-cover shadow-sm">
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-xs font-bold text-dynamic-primary">${recipe.category}</span>
+                                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
+                                                ${recipe.matchScore}% Match
+                                            </span>
+                                        </div>
+                                        <h3 class="font-serif font-bold text-base text-cocoa-900 line-clamp-1 mb-1">${recipe.title}</h3>
+                                        <p class="text-[11px] text-cocoa-800/60 line-clamp-1">${recipe.ingredients.map(i=>i.name).join(', ')}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 4. WEBRTC CAMERA DISH CAPTURE VIEW TEMPLATE
+        function renderCameraView() {
+            return `
+                <div class="max-w-3xl mx-auto space-y-6 animate-fadeIn">
+                    <div class="text-center">
+                        <h1 class="font-serif font-extrabold text-3xl sm:text-4xl text-cocoa-900">Community Dish Snap Studio</h1>
+                        <p class="text-xs text-cocoa-800/70 mt-1">Capture your culinary creation using your camera and share with the RecipeVerse community!</p>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-3xl flex flex-col items-center">
+                        <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden mb-6 flex items-center justify-center">
+                            <video id="webcamVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+                            <canvas id="snapshotCanvas" class="hidden w-full h-full object-cover"></canvas>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <button id="btnCapture" onclick="takePhotoSnapshot()" class="px-6 py-3 rounded-2xl bg-dynamic-primary text-white font-bold text-xs hover:opacity-90 transition flex items-center gap-2 shadow-lg">
+                                <i class="fa-solid fa-camera"></i> Capture Dish
+                            </button>
+                            <button id="btnRetake" onclick="resetCameraStream()" class="hidden px-6 py-3 rounded-2xl bg-cocoa-100 text-cocoa-900 font-bold text-xs hover:bg-cocoa-200 transition">
+                                Retake Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. FAVORITES VIEW TEMPLATE
+        function renderFavoritesView() {
+            const favRecipes = RECIPES_DATABASE.filter(r => state.favorites.includes(r.id));
+            return `
+                <div class="space-y-6 animate-fadeIn">
+                    <h1 class="font-serif font-extrabold text-3xl text-cocoa-900">Your Saved Cookbook (${favRecipes.length})</h1>
+                    ${favRecipes.length > 0 ? `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${favRecipes.map(recipe => renderRecipeCard(recipe)).join('')}
+                        </div>
+                    ` : `
+                        <div class="text-center py-16 glass-card rounded-3xl">
+                            <i class="fa-regular fa-heart text-4xl text-rose-300 mb-3 block"></i>
+                            <p class="font-bold text-cocoa-900 text-base">No saved recipes yet</p>
+                            <button onclick="navigateTo('home')" class="mt-4 px-6 py-2.5 rounded-full bg-dynamic-primary text-white font-bold text-xs">Discover Recipes</button>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // 6. MASTERCLASSES VIEW TEMPLATE
+        function renderClassesView() {
+            return `
+                <div class="space-y-8 animate-fadeIn max-w-5xl mx-auto">
+                    <div class="text-center max-w-2xl mx-auto">
+                        <span class="px-3.5 py-1.5 rounded-full bg-orange-100 text-orange-900 font-bold text-xs uppercase tracking-wider">Masterclass Academy</span>
+                        <h1 class="font-serif font-extrabold text-3xl sm:text-5xl text-cocoa-900 mt-2 mb-3">Learn from Michelin Chefs</h1>
+                        <p class="text-xs sm:text-sm text-cocoa-800/70">Interactive live online cooking workshops with culinary masters.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="glass-card p-6 rounded-3xl space-y-4">
+                            <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80" class="w-full h-48 rounded-2xl object-cover">
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase">Live - Nov 12</span>
+                            <h3 class="font-serif font-bold text-xl text-cocoa-900">Artisan Pasta &amp; Pizza Mastery</h3>
+                            <p class="text-xs text-cocoa-800/70">Master authentic Italian pizza dough fermentation and fresh egg pasta shapes from scratch.</p>
+                            <button onclick="showToast('Enrolled in Pasta & Pizza Masterclass!')" class="w-full py-3 rounded-2xl bg-dynamic-primary text-white font-bold text-xs shadow-md hover:opacity-90">Enroll in Workshop ($29)</button>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-3xl space-y-4">
+                            <img src="https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=800&q=80" class="w-full h-48 rounded-2xl object-cover">
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase">Live - Nov 18</span>
+                            <h3 class="font-serif font-bold text-xl text-cocoa-900">Royal Indian Curry Secret Techniques</h3>
+                            <p class="text-xs text-cocoa-800/70">Learn deep spice tempering, cashew gravies, and authentic dum biryani layering.</p>
+                            <button onclick="showToast('Enrolled in Indian Curry Masterclass!')" class="w-full py-3 rounded-2xl bg-dynamic-primary text-white font-bold text-xs shadow-md hover:opacity-90">Enroll in Workshop ($35)</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ==========================================================================
+           INTERACTIVE COOKING ASSISTANT MODAL LOGIC
+           ========================================================================== */
+        function startCookingMode(recipeId) {
+            const recipe = RECIPES_DATABASE.find(r => r.id === recipeId);
+            if (!recipe) return;
+
+            state.activeRecipe = recipe;
+            state.cookingStep = 0;
+            state.timerSeconds = 300; // default 5 mins
+
+            document.getElementById('cookRecipeTitle').innerText = recipe.title;
+            updateCookingStepUI();
+
+            const modal = document.getElementById('cookingModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function updateCookingStepUI() {
+            const recipe = state.activeRecipe;
+            const totalSteps = recipe.instructions.length;
+            const current = state.cookingStep;
+
+            document.getElementById('cookStepBadge').innerText = `Step ${current + 1} of ${totalSteps}`;
+            document.getElementById('cookStepInstruction').innerText = recipe.instructions[current];
+
+            document.getElementById('btnPrevStep').style.visibility = current === 0 ? 'hidden' : 'visible';
+            document.getElementById('btnNextStep').innerText = current === totalSteps - 1 ? 'Finish Cooking 🎉' : 'Next Step';
+            
+            // Speak step automatically
+            speakStep();
+        }
+
+        function nextStep() {
+            if (state.cookingStep < state.activeRecipe.instructions.length - 1) {
+                state.cookingStep++;
+                updateCookingStepUI();
+            } else {
+                exitCookingMode();
+                showToast("Congratulations! You completed cooking this dish! 🎉");
+            }
+        }
+
+        function prevStep() {
+            if (state.cookingStep > 0) {
+                state.cookingStep--;
+                updateCookingStepUI();
+            }
+        }
+
+        function exitCookingMode() {
+            clearInterval(state.timerInterval);
+            state.isTimerRunning = false;
+            window.speechSynthesis?.cancel();
+
+            const modal = document.getElementById('cookingModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Timer Logic
+        function toggleTimer() {
+            const btn = document.getElementById('btnStartTimer');
+            if (state.isTimerRunning) {
+                clearInterval(state.timerInterval);
+                state.isTimerRunning = false;
+                btn.innerHTML = `<i class="fa-solid fa-play"></i> Start`;
+            } else {
+                state.isTimerRunning = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i> Pause`;
+                state.timerInterval = setInterval(() => {
+                    if (state.timerSeconds > 0) {
+                        state.timerSeconds--;
+                        formatTimerDisplay();
+                    } else {
+                        clearInterval(state.timerInterval);
+                        state.isTimerRunning = false;
+                        showToast("⏰ Timer finished!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(state.timerInterval);
+            state.isTimerRunning = false;
+            state.timerSeconds = 300;
+            formatTimerDisplay();
+            document.getElementById('btnStartTimer').innerHTML = `<i class="fa-solid fa-play"></i> Start`;
+        }
+
+        function formatTimerDisplay() {
+            const mins = Math.floor(state.timerSeconds / 60).toString().padStart(2, '0');
+            const secs = (state.timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('cookTimerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        // Text To Speech
+        function speakStep() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const text = document.getElementById('cookStepInstruction').innerText;
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        /* ==========================================================================
+           SHOPPING DRAWER LOGIC
+           ========================================================================== */
+        function toggleShoppingList() {
+            const drawer = document.getElementById('shoppingDrawer');
+            drawer.classList.toggle('translate-x-full');
+            renderShoppingList();
+        }
+
+        function renderShoppingList() {
+            const container = document.getElementById('shoppingListContainer');
+            const cart = state.shoppingList;
+
+            document.getElementById('cartCountSubtitle').innerText = `${cart.length} items collected`;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-cocoa-800/50">
+                        <i class="fa-solid fa-basket-shopping text-3xl mb-2 block"></i>
+                        <p class="text-xs">Your shopping drawer is empty.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cart.map((item, idx) => `
+                <div class="flex items-center justify-between p-3 rounded-2xl ${item.checked ? 'bg-cocoa-50 opacity-60' : 'bg-white border border-orange-100'} shadow-sm">
+                    <label class="flex items-center gap-3 cursor-pointer flex-1">
+                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleCartItem(${idx})" class="w-4 h-4 text-coral-500 rounded border-orange-300">
+                        <span class="text-xs font-semibold ${item.checked ? 'line-through text-cocoa-800/60' : 'text-cocoa-900'}">${item.name}</span>
+                    </label>
+                    <span class="text-[11px] font-bold text-dynamic-primary px-2">${item.qty}</span>
+                    <button onclick="removeCartItem(${idx})" class="text-cocoa-800/30 hover:text-rose-600 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function addSingleIngredientToCart(name, qty) {
+            state.shoppingList.push({ id: Date.now().toString(), name, qty, checked: false });
+            saveCart();
+            showToast(`Added ${name} to shopping list!`);
+        }
+
+        function addAllIngredientsToCart() {
+            if (!state.activeRecipe) return;
+            state.activeRecipe.ingredients.forEach(i => {
+                state.shoppingList.push({ id: Date.now().toString(), name: i.name, qty: `${i.qty || ''} ${i.unit || ''}`, checked: false });
+            });
+            saveCart();
+            showToast("Added all recipe ingredients to shopping list!");
+        }
+
+        function toggleCartItem(idx) {
+            state.shoppingList[idx].checked = !state.shoppingList[idx].checked;
+            saveCart();
+            renderShoppingList();
+        }
+
+        function removeCartItem(idx) {
+            state.shoppingList.splice(idx, 1);
+            saveCart();
+            renderShoppingList();
+        }
+
+        function clearShoppingList() {
+            state.shoppingList = [];
+            saveCart();
+            renderShoppingList();
+        }
+
+        function saveCart() {
+            localStorage.setItem('rv_cart', JSON.stringify(state.shoppingList));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadgeCount');
+            if (badge) badge.innerText = state.shoppingList.length;
+        }
+
+        function copyShoppingList() {
+            const text = state.shoppingList.map(i => `- [${i.checked ? 'x' : ' '}] ${i.name} (${i.qty})`).join('\n');
+            navigator.clipboard?.writeText(text);
+            showToast("Shopping list copied to clipboard!");
+        }
+
+        /* ==========================================================================
+           UTILITIES & HELPERS
+           ========================================================================== */
+        function toggleFavorite(id) {
+            const idx = state.favorites.indexOf(id);
+            if (idx > -1) {
+                state.favorites.splice(idx, 1);
+                showToast("Removed from saved recipes");
+            } else {
+                state.favorites.push(id);
+                showToast("Saved to your cookbook ❤️");
+            }
+            localStorage.setItem('rv_favs', JSON.stringify(state.favorites));
+            renderView();
+        }
+
+        function filterByCategory(cat) {
+            state.selectedCategory = cat;
+            if (state.currentView !== 'home') navigateTo('home');
+            else renderView();
+        }
+
+        function handleSearch(val) {
+            state.searchQuery = val;
+            if (state.currentView !== 'home') navigateTo('home');
+            else renderView();
+        }
+
+        function scaleServings(delta) {
+            const display = document.getElementById('servingsDisplay');
+            if (!display || !state.activeRecipe) return;
+
+            let current = parseInt(display.innerText);
+            current = Math.max(1, current + delta);
+            display.innerText = `${current} Servings`;
+
+            const container = document.getElementById('ingredientsListContainer');
+            if (container) {
+                container.innerHTML = renderIngredientsList(state.activeRecipe, state.activeRecipe.servings);
+            }
+        }
+
+        function addFridgeIngredient() {
+            const input = document.getElementById('addFridgeInput');
+            if (input && input.value.trim()) {
+                state.fridgeIngredients.push(input.value.trim());
+                input.value = '';
+                renderView();
+            }
+        }
+
+        function removeFridgeIngredient(idx) {
+            state.fridgeIngredients.splice(idx, 1);
+            renderView();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function copyRecipeLink() {
+            navigator.clipboard?.writeText(window.location.href);
+            showToast("Recipe link copied to clipboard!");
+        }
+
+        // WebRTC Camera Helper
+        function initCameraStream() {
+            const video = document.getElementById('webcamVideo');
+            if (video && navigator.mediaDevices?.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => { video.srcObject = stream; })
+                    .catch(() => { console.log("Camera access disabled or unsupported."); });
+            }
+        }
+
+        function takePhotoSnapshot() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('snapshotCanvas');
+            if (!video || !canvas) return;
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            video.classList.add('hidden');
+            canvas.classList.remove('hidden');
+
+            document.getElementById('btnCapture').classList.add('hidden');
+            document.getElementById('btnRetake').classList.remove('hidden');
+
+            showToast("Dish photo snapped successfully!");
+        }
+
+        function resetCameraStream() {
+            const video = document.getElementById('webcamVideo');
+            const canvas = document.getElementById('snapshotCanvas');
+
+            if (video && canvas) {
+                video.classList.remove('hidden');
+                canvas.classList.add('hidden');
+                document.getElementById('btnCapture').classList.remove('hidden');
+                document.getElementById('btnRetake').classList.add('hidden');
+            }
+        }
+
+        // Initial App Mount
+        window.onload = function() {
+            renderView();
+        };
+    </script>
+</body>
+</html>
